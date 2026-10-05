@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/*
+  MKY design tokens
+  Direction: tech-forward logistics platform. Deep navy "control room" surfaces,
+  MKY signal orange for actions, sky blue reserved for data (routes, live status).
+*/
+@theme {
+  /* Graphite/navy foundation */
+  --color-ink-950: #03050a;
+  --color-ink-900: #070c16;
+  --color-ink-800: #0d1626;
+  --color-ink-700: #19304f;
+  --color-ink-600: #2a4266;
+  --color-ink-400: #7f8ea6;
+  --color-ink-300: #aab6c8;
+  --color-ink-100: #e7ecf3;
+
+  --color-paper: #f4f5f7;
+  --color-mist: #e9ecf1;
+  --color-line: #d9dee6;
+  --color-slate: #555f6e;
+
+  /* Copper-orange: MKY action colour */
+  --color-signal-400: #df9b67;
+  --color-signal-500: #e0662c;
+  --color-signal-600: #c8541d;
+  --color-signal-700: #a8461a;
+
+  /* Steel teal: data, routes, live status */
+  --color-sky-400: #6fd0d6;
+  --color-sky-500: #3fa9b4;
+  --color-steel-400: #8aa4b8;
+  --color-steel-500: #617e93;
+
+  --color-ok-500: #17a673;
+  --color-warn-500: #f2a024;
+  --color-danger-500: #d93b3b;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: "Archivo Variable", var(--font-geist-sans), ui-sans-serif, sans-serif;
+
+  --animate-dash: dash 2.4s linear infinite;
+  --animate-pulse-ring: pulse-ring 2s ease-out infinite;
+
+  @keyframes dash {
+    to { stroke-dashoffset: -24; }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-paper text-ink-900 font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4 { text-wrap: balance; letter-spacing: -0.02em; }
+  ::selection { background: var(--color-signal-500); color: white; }
+  :focus-visible { outline: 2px solid var(--color-signal-500); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+  .eyebrow { @apply font-mono text-xs uppercase tracking-[0.14em] text-signal-700; }
+  .eyebrow-dark { @apply font-mono text-xs uppercase tracking-[0.14em] text-signal-400; }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .field-input {
+    @apply w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-[15px] text-ink-900 placeholder:text-ink-400 transition focus:border-ink-900 focus:outline-none focus:ring-4 focus:ring-signal-500/20;
+  }
+  .field-input-dark {
+    @apply w-full rounded-lg border border-ink-600 bg-ink-950/60 px-3 py-2.5 text-[15px] text-white placeholder:text-ink-400 transition focus:border-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-400/15;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+  /* Wide, heavy uppercase display type */
+  .display { font-family: var(--font-display); font-stretch: 112%; font-weight: 800; text-transform: uppercase; letter-spacing: -0.015em; line-height: 0.95; }
+  .display-md { font-family: var(--font-display); font-stretch: 108%; font-weight: 750; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; }
+  .glass { @apply bg-ink-900/55 ring-1 ring-white/10 backdrop-blur-xl; }
+  .glow-line { filter: drop-shadow(0 0 1.2px currentColor); }
+}
