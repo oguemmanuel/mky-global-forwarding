@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-const quoteMode = { "air-freight": "air", "ocean-freight": "sea", "road-freight": "road", "customs-clearance": "air" } as const;
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -37,8 +36,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         lead={s.intro}
       >
         <div className="flex flex-wrap gap-3 pt-2">
-          <ButtonLink href={`/quote?mode=${quoteMode[s.slug]}`} size="lg">
-            Quote {s.name.toLowerCase()} <ArrowRight className="h-4 w-4" />
+          <ButtonLink href={`/quote?mode=${s.quoteMode}`} size="lg">
+            Get a quote <ArrowRight className="h-4 w-4" />
           </ButtonLink>
           <ButtonLink href="/contact" variant="ghost-dark" size="lg">
             Ask a question
@@ -93,10 +92,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               </p>
             </div>
             <div className="rounded-2xl bg-ink-900 p-6 text-white">
-              <p className="font-medium">Work out your chargeable weight</p>
-              <p className="mt-1 text-sm text-ink-300">Use our free calculators before you request a quote.</p>
-              <Link href="/tools" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-signal-400 hover:text-signal-500">
-                Open freight tools <ArrowRight className="h-4 w-4" />
+              <p className="font-medium">Already shipping with us?</p>
+              <p className="mt-1 text-sm text-ink-300">Check your vehicle&apos;s status with its VIN or chassis number.</p>
+              <Link href="/track" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-signal-400 hover:text-signal-500">
+                Track by VIN <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </aside>

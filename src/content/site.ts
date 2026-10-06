@@ -35,11 +35,11 @@ export const company = {
   },
 } as const;
 
-export type ServiceSlug = "air-freight" | "ocean-freight" | "road-freight" | "customs-clearance";
+export type ServiceSlug = "vehicle-shipping" | "export-documents" | "inland-transport" | "container-cargo";
 
 export type Service = {
   slug: ServiceSlug;
-  media: "air" | "ocean" | "road" | "customs";
+  media: "air" | "ocean" | "road" | "customs" | "cta" | "hero";
   code: string;
   name: string;
   short: string;
@@ -49,114 +49,120 @@ export type Service = {
   includes: string[];
   documents: string[];
   confirm: string[];
+  /** Default quote-form mode when a visitor clicks "Quote" on this service */
+  quoteMode: QuoteMode;
 };
 
+/**
+ * Service content is based on MKY's shipments sheet (vehicle exports from EU ports with
+ * MRN, EUR.1 and ACID/CargoX documents). Items in `confirm` must be checked with MKY.
+ */
 export const services: Service[] = [
   {
-    slug: "air-freight",
-    media: "air",
-    code: "AIR",
-    name: "Air freight",
-    short: "Urgent and high-value cargo on scheduled flights, airport to airport or door to door.",
-    headline: "Air freight when the deadline can't move",
-    intro:
-      "For time-sensitive, high-value or perishable cargo. We book space with airlines, arrange collection, issue the air waybill and handle export and import formalities at both ends.",
-    idealFor: ["Spare parts and machinery components", "Electronics and high-value goods", "Samples and urgent replenishment"],
-    includes: [
-      "Consolidated and direct shipments",
-      "Door-to-door or airport-to-airport",
-      "Air waybill (AWB) issued and tracked",
-      "Collection from your premises",
-      "Chargeable weight calculated upfront",
-      "Cargo insurance on request",
-    ],
-    documents: ["Commercial invoice", "Packing list", "Air waybill (AWB)", "Export declaration"],
-    confirm: ["Dangerous goods (DG) handling", "Temperature-controlled cargo"],
-  },
-  {
-    slug: "ocean-freight",
+    slug: "vehicle-shipping",
     media: "ocean",
-    code: "SEA",
-    name: "Ocean freight",
-    short: "Full containers or shared space for smaller loads, port to port or door to door.",
-    headline: "Ocean freight for volume at the lowest cost per kilo",
+    code: "VEHICLES",
+    name: "Vehicle shipping",
+    short: "Cars, vans, trucks and trailers shipped from European ports to the Middle East and North Africa.",
+    headline: "Vehicle shipping from Europe to the Middle East",
     intro:
-      "The most economical way to move large volumes over long distances. Book a full container for your own goods, or pay only for the space you use in a shared one.",
-    idealFor: ["Regular import and export programmes", "Heavy or bulky goods", "Cost-sensitive shipments with flexible timing"],
+      "We book your vehicles on the right sailing, handle the export paperwork and keep you updated by VIN from booking to release at the destination port.",
+    idealFor: ["Car and commercial vehicle exporters", "Dealers and fleet buyers in Egypt, Kuwait and the region", "Trucks and trailers moving to new markets"],
     includes: [
-      "FCL: 20', 40' and 40' high-cube containers",
-      "LCL: pay per cubic metre",
-      "Bill of lading (B/L) handling",
-      "Port-to-port or door-to-door",
-      "Pre-carriage and on-carriage by truck",
-      "Container tracking by ISO number",
+      "Booking on scheduled sailings",
+      "Cars, vans, trucks and trailers",
+      "Status updates by VIN / chassis number",
+      "Loading and port coordination",
+      "Shipping invoice and bill of lading handling",
+      "Release follow-up at destination",
     ],
-    documents: ["Commercial invoice", "Packing list", "Bill of lading (B/L)", "Certificate of origin (if required)"],
-    confirm: ["Main ports used (e.g. Gdańsk, Gdynia, Hamburg)", "Reefer containers"],
+    documents: ["Vehicle registration or title", "Commercial invoice", "Export declaration (MRN)", "Importer details for destination country"],
+    confirm: ["Ro-Ro, containers or both", "Origin ports used (e.g. Antwerp, Alicante, Trieste)", "Non-running vehicles accepted"],
+    quoteMode: "vehicle",
   },
   {
-    slug: "road-freight",
-    media: "road",
-    code: "ROAD",
-    name: "Road freight",
-    short: "Full and part truckloads across Poland and the European Union.",
-    headline: "Road freight across Poland and the EU",
-    intro:
-      "Flexible trucking for full loads or a few pallets. Ideal for regional distribution and for linking ports and airports to your warehouse.",
-    idealFor: ["EU distribution", "Palletised goods", "Port and airport connections"],
-    includes: [
-      "FTL: a full truck for your cargo",
-      "LTL: shared space for pallet loads",
-      "CMR consignment notes provided",
-      "Domestic and cross-border routes",
-      "Tail-lift and curtain-sider options",
-    ],
-    documents: ["CMR consignment note", "Commercial invoice", "Packing list"],
-    confirm: ["Own fleet or partner hauliers", "Countries covered by road"],
-  },
-  {
-    slug: "customs-clearance",
+    slug: "export-documents",
     media: "customs",
-    code: "CUSTOMS",
-    name: "Customs clearance",
-    short: "Import and export declarations and transit documents, prepared right the first time.",
-    headline: "Customs clearance without delays at the border",
+    code: "DOCUMENTS",
+    name: "Export documents",
+    short: "MRN export declarations, EUR.1 certificates and ACID filing via CargoX for Egypt.",
+    headline: "Export documents done right, before the ship sails",
     intro:
-      "Mistakes in customs paperwork lead to holds, storage fees and missed deadlines. We prepare and submit declarations for goods entering or leaving the EU and keep you informed at every step.",
-    idealFor: ["First-time importers into the EU", "Exporters shipping outside the EU", "Goods moving under transit"],
+      "Missing or wrong paperwork is the most common reason a vehicle is held at port. We prepare the export declaration, origin certificates and destination filings, and check every detail before loading.",
+    idealFor: ["Exporters shipping vehicles outside the EU", "Shipments to Egypt that need ACID", "Goods that qualify for preferential origin"],
     includes: [
-      "Import and export declarations",
-      "T1 / T2 transit documents",
-      "Tariff (HS code) classification",
-      "Duty and VAT calculation",
-      "EORI number guidance",
-      "Certificates of origin",
+      "EU export declaration and MRN",
+      "EUR.1 movement certificates where a trade agreement applies",
+      "ACID filing support and document upload via CargoX for Egypt",
+      "Document checks before loading",
+      "Document-only service for shipments booked elsewhere",
     ],
-    documents: ["Commercial invoice", "Packing list", "EORI number", "Transport document (AWB, B/L or CMR)"],
-    confirm: ["Licensed customs agent status", "AEO certification"],
+    documents: ["Commercial invoice", "Vehicle registration or title", "Exporter and importer details", "ACID number from the Egyptian importer (for Egypt)"],
+    confirm: ["Documents MKY issues in-house vs via a partner agent", "Document-only service offered"],
+    quoteMode: "documents",
+  },
+  {
+    slug: "inland-transport",
+    media: "road",
+    code: "TRANSPORT",
+    name: "Inland transport",
+    short: "Collection and delivery of vehicles and cargo across Europe to the port of loading.",
+    headline: "From your yard to the port of loading",
+    intro:
+      "We arrange collection by car transporter or truck from anywhere in Europe and deliver to the port in time for the cut-off, so the vehicle makes its sailing.",
+    idealFor: ["Vehicles bought from dealers or auctions across Europe", "Trucks and trailers driven or carried to port", "Combined road and sea routes, e.g. via Trieste"],
+    includes: [
+      "Collection from dealers, auctions or private sellers",
+      "Car transporter and truck options",
+      "Delivery to port before cut-off",
+      "Coordination with the sailing booking",
+    ],
+    documents: ["Collection address and contact", "Vehicle details (make, model, VIN)", "Release note from the seller"],
+    confirm: ["Countries covered for collection", "Own fleet or partner hauliers"],
+    quoteMode: "road",
+  },
+  {
+    slug: "container-cargo",
+    media: "cta",
+    code: "CARGO",
+    name: "Container & cargo",
+    short: "Containers and general cargo on the same lanes, with the same document support.",
+    headline: "Container and general cargo on our lanes",
+    intro:
+      "Alongside vehicles, we can move containers and general cargo on the same routes, with export declarations and origin documents handled in-house.",
+    idealFor: ["Spare parts and accessories shipped with vehicles", "Machinery and equipment", "Regular container exports"],
+    includes: [
+      "Full containers (20', 40', 40' high cube)",
+      "Bill of lading handling",
+      "Export declaration and origin documents",
+      "Port-to-port or door-to-port",
+    ],
+    documents: ["Commercial invoice", "Packing list", "Export declaration (MRN)"],
+    confirm: ["Whether MKY offers container and general cargo shipping"],
+    quoteMode: "cargo",
   },
 ];
 
 export const getService = (slug: string) => services.find((s) => s.slug === slug);
 
 export const processSteps = [
-  { title: "Quote", body: "Tell us what you're shipping and where. You get a price and transit options from a real coordinator." },
-  { title: "Book", body: "We book space with the airline, shipping line or haulier and schedule collection." },
-  { title: "Clear", body: "We prepare the customs paperwork so cargo clears without holds or storage fees." },
-  { title: "Deliver", body: "Follow every milestone online until the goods arrive, with one contact throughout." },
+  { title: "Quote", body: "Send the vehicle details and route. A coordinator replies with the price and the next sailing." },
+  { title: "Documents", body: "We prepare the export declaration (MRN), EUR.1 and, for Egypt, the ACID filing via CargoX." },
+  { title: "Load & sail", body: "We book the sailing, coordinate delivery to port and confirm loading." },
+  { title: "Release", body: "Follow each vehicle by VIN until it's released at the destination port." },
 ];
 
 export const stats = [
-  { value: TODO("XX"), label: "countries shipped to" },
-  { value: TODO("X,XXX"), label: "shipments handled" },
-  { value: TODO("XX yrs"), label: "combined team experience" },
+  { value: TODO("X,XXX"), label: "vehicles shipped" },
+  { value: TODO("XX"), label: "sailings per year" },
+  { value: TODO("XX"), label: "destination ports" },
   { value: TODO("< X h"), label: "average quote reply" },
 ];
 
 export const accreditations = [
-  TODO("IATA cargo agent"),
-  TODO("FIATA member"),
+  TODO("Customs agent licence"),
   TODO("AEO certificate"),
+  TODO("FIATA member"),
   TODO("PISiL member"),
 ];
 
@@ -169,25 +175,40 @@ export const testimonial = {
 export const team = [
   { name: TODO("Name"), role: TODO("Managing Director") },
   { name: TODO("Name"), role: TODO("Operations") },
-  { name: TODO("Name"), role: TODO("Customs") },
-  { name: TODO("Name"), role: TODO("Sales") },
+  { name: TODO("Name"), role: TODO("Documents & customs") },
+  { name: TODO("Name"), role: TODO("Data control") },
 ];
 
-/** Example lanes for the coverage map. Replace with MKY's real core lanes. */
-export const lanes: { code: string; city: string; lat: number; lng: number; mode: "air" | "sea" | "road"; label?: "left" | "below" }[] = [
-  { code: "GDN", city: "Gdańsk", lat: 54.35, lng: 18.65, mode: "sea" },
-  { code: "HAM", city: "Hamburg", lat: 53.55, lng: 9.99, mode: "sea" },
-  { code: "RTM", city: "Rotterdam", lat: 51.92, lng: 4.48, mode: "road", label: "left" },
-  { code: "MXP", city: "Milan", lat: 45.63, lng: 8.72, mode: "road", label: "left" },
-  { code: "IST", city: "Istanbul", lat: 41.01, lng: 28.98, mode: "road" },
-  { code: "DXB", city: "Dubai", lat: 25.2, lng: 55.27, mode: "air" },
-  { code: "JED", city: "Jeddah", lat: 21.49, lng: 39.17, mode: "sea" },
-  { code: "BOM", city: "Mumbai", lat: 19.08, lng: 72.88, mode: "air" },
-  { code: "TEM", city: "Tema", lat: 5.64, lng: 0.01, mode: "sea", label: "left" },
-  { code: "LOS", city: "Lagos", lat: 6.52, lng: 3.38, mode: "air" },
-  { code: "SHA", city: "Shanghai", lat: 31.23, lng: 121.47, mode: "sea" },
+export type QuoteMode = "vehicle" | "cargo" | "road" | "documents";
+
+export type Port = { code: string; city: string; country: string; lat: number; lng: number; label?: "left" | "below" };
+
+/** Ports of loading (Europe). Confirm the full list with MKY. */
+export const originPorts: Port[] = [
+  { code: "ANR", city: "Antwerp", country: "Belgium", lat: 51.26, lng: 4.4, label: "left" },
+  { code: "ALC", city: "Alicante", country: "Spain", lat: 38.34, lng: -0.48, label: "left" },
+  { code: "TRS", city: "Trieste", country: "Italy", lat: 45.65, lng: 13.77 },
 ];
 
+/** Destination ports. Confirm the full list with MKY. */
+export const destinationPorts: Port[] = [
+  { code: "ALY", city: "Alexandria", country: "Egypt", lat: 31.2, lng: 29.92, label: "below" },
+  { code: "SWK", city: "Shuwaikh", country: "Kuwait", lat: 29.35, lng: 47.93 },
+  { code: "LAT", city: "Latakia", country: "Syria", lat: 35.52, lng: 35.78 },
+];
+
+/** Lanes seen in MKY's shipments sheet. Add or remove as MKY confirms. */
+export const lanes: { from: string; to: string }[] = [
+  { from: "ALC", to: "ALY" },
+  { from: "ANR", to: "SWK" },
+  { from: "ANR", to: "LAT" },
+  { from: "ANR", to: "ALY" },
+];
+
+export const allPorts = [...originPorts, ...destinationPorts];
+export const portByCode = (code: string) => allPorts.find((p) => p.code === code);
+
+/** Head office, shown on the map */
 export const origin = { code: "KRK", city: "Kraków", lat: 50.06, lng: 19.94 };
 
 export type Incoterm = {
@@ -211,10 +232,23 @@ export const incoterms: Incoterm[] = [
   { code: "DDP", name: "Delivered Duty Paid", modes: "any", carriagePaidBy: "Seller", riskTransfers: "On arrival at the named place, with import duties paid", stages: ["Seller", "Seller", "Either", "Seller"] },
 ];
 
-export const nav = [
+/**
+ * Phase switches. Phase 1 ships a small, solid core (tracking by VIN, quote requests saved,
+ * admin view of the data). Turn features on one at a time in Phase 2 and note it in docs/PHASES.md.
+ */
+export const features = {
+  tools: false, // /tools calculators and Incoterms explorer
+  polish: false, // EN/PL switch in the header
+  contactForm: false, // form on /contact (contact details still show)
+  emailNotifications: false, // also needs RESEND_API_KEY
+} as const;
+
+const allNav = [
   { href: "/services", key: "services" },
-  { href: "/tools", key: "tools" },
+  { href: "/tools", key: "tools", feature: "tools" },
   { href: "/track", key: "track" },
   { href: "/about", key: "about" },
   { href: "/contact", key: "contact" },
 ] as const;
+
+export const nav = allNav.filter((item) => !("feature" in item) || features[item.feature]);

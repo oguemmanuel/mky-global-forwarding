@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Menu, X } from "lucide-react";
-import { nav } from "@/content/site";
+import { features, nav } from "@/content/site";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { locales } from "@/i18n/dictionaries";
 import { ButtonLink, Logo } from "@/components/ui";
@@ -54,7 +54,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto hidden items-center gap-3 lg:flex">
-          <LocaleSwitch locale={locale} onChange={setLocale} />
+          {features.polish && <LocaleSwitch locale={locale} onChange={setLocale} />}
           <ButtonLink href="/track" variant="ghost-dark" size="sm">
             {t.cta.track}
           </ButtonLink>
@@ -94,7 +94,7 @@ export function Header() {
               <ButtonLink href="/track" variant="ghost-dark">
                 {t.cta.track}
               </ButtonLink>
-              <LocaleSwitch locale={locale} onChange={setLocale} />
+              {features.polish && <LocaleSwitch locale={locale} onChange={setLocale} />}
             </div>
           </nav>
         </div>

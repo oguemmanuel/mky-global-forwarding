@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { ButtonLink, Fill } from "@/components/ui";
-import { company } from "@/content/site";
+import { company, features } from "@/content/site";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function ContactPage() {
       <PageHero
         crumbs={[{ href: "/", label: "Home" }, { label: "Contact" }]}
         title="Talk to the MKY team"
-        lead="For a price, the quote form is fastest. For anything else, reach us here."
+        lead="For a price, the quote form is fastest. For anything else, message us on WhatsApp, call or email."
       >
         <div className="pt-2">
           <ButtonLink href="/quote">Request a quote</ButtonLink>
@@ -26,7 +26,27 @@ export default function ContactPage() {
       </PageHero>
       <section className="py-14 lg:py-20">
         <div className="container-x grid gap-8 lg:grid-cols-[1fr_380px]">
-          <ContactForm />
+          {features.contactForm ? (
+            <ContactForm />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <a href={company.whatsapp} target="_blank" rel="noopener" className="rounded-2xl bg-[#1fa855] p-6 text-white hover:bg-[#1a9049]">
+                <MessageCircle className="h-6 w-6" />
+                <p className="mt-6 text-xl font-semibold">WhatsApp</p>
+                <p className="mt-1 text-white/85">Fastest reply. Send your VIN or question.</p>
+              </a>
+              <a href={`tel:${company.phoneHref}`} className="rounded-2xl bg-white p-6 ring-1 ring-line hover:ring-ink-300">
+                <Phone className="h-6 w-6 text-signal-500" />
+                <p className="mt-6 text-xl font-semibold num">{company.phone}</p>
+                <p className="mt-1 text-slate">Call the office</p>
+              </a>
+              <a href={`mailto:${company.email}`} className="rounded-2xl bg-white p-6 ring-1 ring-line hover:ring-ink-300 sm:col-span-2">
+                <Mail className="h-6 w-6 text-signal-500" />
+                <p className="mt-6 break-all text-xl font-semibold">{company.email}</p>
+                <p className="mt-1 text-slate">For documents and booking details</p>
+              </a>
+            </div>
+          )}
           <aside className="space-y-4">
             <div className="space-y-5 rounded-2xl bg-ink-900 p-6 text-white">
               <Item Icon={MapPin} k="Office">

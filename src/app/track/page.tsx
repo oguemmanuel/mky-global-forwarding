@@ -5,8 +5,8 @@ import { demoReferences } from "@/lib/tracking";
 import { TrackClient } from "./TrackClient";
 
 export const metadata: Metadata = {
-  title: "Track a shipment",
-  description: "Track your MKY shipment by reference, air waybill, bill of lading or container number.",
+  title: "Track your vehicle by VIN",
+  description: "Track your vehicle shipment with MKY by VIN / chassis number: documents, loading, sailing and release.",
   alternates: { canonical: "/track" },
 };
 
@@ -15,8 +15,8 @@ export default function TrackPage() {
     <>
       <PageHero
         crumbs={[{ href: "/", label: "Home" }, { label: "Track" }]}
-        title="Track a shipment"
-        lead="Enter your MKY reference, air waybill, bill of lading or container number."
+        title="Track your vehicle"
+        lead="Enter the 17-character VIN / chassis number, or your MKY reference."
       />
       <section className="py-14 lg:py-20">
         <div className="container-x max-w-4xl">

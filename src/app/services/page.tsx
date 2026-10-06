@@ -6,8 +6,8 @@ import { ButtonLink } from "@/components/ui";
 import { services } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Freight services: air, ocean, road and customs",
-  description: "Air freight, FCL and LCL ocean freight, EU road freight and customs clearance from MKY Global Forwarding in Kraków.",
+  title: "Services: vehicle shipping, export documents, inland transport",
+  description: "Vehicle shipping from European ports to the Middle East, export documents (MRN, EUR.1, ACID / CargoX) and collection across Europe.",
   alternates: { canonical: "/services" },
 };
 
@@ -16,8 +16,8 @@ export default function ServicesPage() {
     <>
       <PageHero
         crumbs={[{ href: "/", label: "Home" }, { label: "Services" }]}
-        title="Air, ocean, road and customs under one roof"
-        lead="Choose one service or let us manage the whole chain. Every shipment comes with a single coordinator and online tracking."
+        title="Vehicles, documents and transport under one roof"
+        lead="Choose one service or let us manage the whole job. Every vehicle comes with one coordinator and tracking by VIN."
       />
       <section className="py-16 lg:py-24">
         <div className="container-x divide-y divide-line">

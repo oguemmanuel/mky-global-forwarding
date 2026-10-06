@@ -7,14 +7,14 @@
 export const dictionaries = {
   en: {
     nav: { services: "Services", tools: "Tools", track: "Track", about: "About", contact: "Contact" },
-    cta: { quote: "Get a quote", track: "Track shipment", talk: "Talk to us" },
+    cta: { quote: "Get a quote", track: "Track by VIN", talk: "Talk to us" },
     hero: {
-      eyebrow: "Air · Ocean · Road · Customs",
-      title: "Freight, forwarded. From Kraków to the world.",
-      sub: "Air, ocean and road freight with customs handled in-house. Price it in minutes, follow every milestone online, and talk to one coordinator the whole way.",
+      eyebrow: "Vehicle shipping · Export documents",
+      title: "Vehicles shipped. Europe to the Middle East.",
+      sub: "We ship cars, trucks and trailers from European ports to Egypt, Kuwait and beyond, with the export documents done for you. Track every vehicle by its VIN, from booking to release.",
     },
     footer: {
-      tagline: "Air, ocean and road freight with customs clearance, from Kraków to the world.",
+      tagline: "Vehicle shipping and export documents from European ports to the Middle East and North Africa.",
       services: "Services",
       company: "Company",
       contact: "Contact",
@@ -24,14 +24,14 @@ export const dictionaries = {
   },
   pl: {
     nav: { services: "Usługi", tools: "Narzędzia", track: "Śledzenie", about: "O nas", contact: "Kontakt" },
-    cta: { quote: "Wycena", track: "Śledź przesyłkę", talk: "Porozmawiajmy" },
+    cta: { quote: "Wycena", track: "Śledź po VIN", talk: "Porozmawiajmy" },
     hero: {
-      eyebrow: "Lotniczy · Morski · Drogowy · Cło",
-      title: "Spedycja bez granic. Z Krakowa na cały świat.",
-      sub: "Transport lotniczy, morski i drogowy z odprawą celną na miejscu. Wycena w kilka minut, śledzenie każdego etapu online i jeden opiekun przez cały czas.",
+      eyebrow: "Transport pojazdów · Dokumenty eksportowe",
+      title: "Pojazdy w drodze. Z Europy na Bliski Wschód.",
+      sub: "Wysyłamy samochody, ciężarówki i naczepy z portów europejskich do Egiptu, Kuwejtu i dalej, z kompletem dokumentów eksportowych. Śledź każdy pojazd po numerze VIN, od rezerwacji do odbioru.",
     },
     footer: {
-      tagline: "Transport lotniczy, morski i drogowy z odprawą celną, z Krakowa na cały świat.",
+      tagline: "Transport pojazdów i dokumenty eksportowe z portów europejskich na Bliski Wschód i do Afryki Północnej.",
       services: "Usługi",
       company: "Firma",
       contact: "Kontakt",
