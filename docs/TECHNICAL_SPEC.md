@@ -60,35 +60,36 @@ src/
 
 ### 4.1 Quote request
 
-- `QuoteWizard` collects mode, Incoterm, customs need, route, ready date, service level, goods, HS code, equipment, pieces, weight, dimensions, dangerous-goods flag and contact details.
-- Each step validates against `quoteSchema` before moving on; the server validates again in `/api/quote`.
-- A hidden honeypot field (`website`) silently drops bot submissions.
-- On success the server creates a reference (`MKY-Q-YYMMDD-XXXX`) and emails the team via `notifyTeam()`.
-- The homepage command bar and service pages deep-link into the wizard with prefilled values (`/quote?mode=sea&to=Tema`).
+- `QuoteWizard` has four modes (`vehicle`, `cargo`, `road`, `documents`) and four steps: service and documents (MRN, EUR.1, ACID / CargoX), route and collection, vehicle or cargo details (VINs checked as you type), contact.
+- Each step validates against `quoteSchema` (Zod `superRefine` per mode); the server validates again in `/api/quote`.
+- The server creates a reference (`MKY-Q-YYMMDD-XXXX`) and saves the request with `saveQuote()`.
+- **Send on WhatsApp:** the client gets a `wa.me` link with a pre-filled message (`src/lib/quoteMessage.ts`), because MKY already handles enquiries on WhatsApp. **Send by email:** saved only in Phase 1; emailed to the team when `features.emailNotifications` is on.
+- The homepage command bar deep-links into the wizard (`/quote?mode=vehicle&from=...&to=...&type=car&count=2`).
+- A hidden honeypot field (`website`) drops bot submissions.
 
-### 4.2 Freight maths (`src/lib/freight.ts`)
+### 4.2 VIN checks (`src/lib/vin.ts`)
 
-| Mode | Volumetric factor | Rule |
-|---|---|---|
-| Air | 167 kg per m³ (6,000 cm³/kg, IATA) | Chargeable = max(actual, volumetric) |
-| Road | 333 kg per m³ | Chargeable = max(actual, volumetric) |
-| Sea (LCL) | 1,000 kg per m³ | Revenue tonnes = max(tonnes, m³) |
-
-Factors are industry conventions and are shown as indicative. **MKY should confirm the factors they use** and adjust `VOLUMETRIC_FACTOR` if needed.
+- ISO 3779 format: 17 characters, letters and digits, no I, O or Q. `vinProblem()` returns a plain-English message.
+- `vinRegion()` reads the first character (world manufacturer region) for display only.
+- Container numbers (for container cargo) are checked with the ISO 6346 check digit.
 
 ### 4.3 Tracking
 
-- `/api/track?ref=...` returns `{ ok, shipment }` or `{ ok: false, reason, message }`.
-- Container numbers are checked with the ISO 6346 check digit before lookup, so typos get a clear message.
-- `findShipment()` in `src/lib/tracking.ts` currently reads demo data (`MKY-DEMO-001`, `MKY-DEMO-002`). Milestone dates are relative to today so the demo never looks stale.
+- `/api/track?ref=...` returns `{ ok, shipment }` or `{ ok: false, reason, message }` and logs the search (`track_search` event) for the admin page.
+- `findShipment()` in `src/lib/tracking.ts` reads demo data now. Milestones follow MKY's sheet: booked, MRN, EUR.1, ACID, loaded, B/L, arrived, released.
+- **Phase 2 source: Google Sheets API.** MKY keeps a tab with one row per vehicle (VIN, vehicle, route, sailing, status columns). A read-only service account reads it on the server and returns only the row that matches the VIN. Client names, prices and other rows never leave the server. Cache for a few minutes to stay within API limits.
+- Only `findShipment()` changes; the UI and API contract stay the same.
 
-**Tracking integration options** (decide with MKY):
+### 4.3a Data store and admin
 
-1. **Manual status page:** staff update shipments in a simple admin or a Google Sheet; the API reads it. Cheapest, fastest to launch.
-2. **MKY's TMS/ERP:** if MKY uses a forwarding system with an API, `findShipment()` calls it and maps fields to the `Shipment` type.
-3. **Carrier visibility API:** container and AWB tracking via a third-party aggregator. Best data, monthly cost.
+- `src/lib/store.ts` saves quotes and events to Supabase (REST, service role key, server-only) when `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are set, otherwise to `.data/store.json` (git-ignored), otherwise memory.
+- `supabase/schema.sql`: tables `quotes` and `events` with row-level security on and no public policies (only the server can read or write), plus views `quotes_weekly` and `quotes_by_lane` for reporting.
+- `/admin`: shared password (`ADMIN_PASSWORD`), compared in constant time; session is an HMAC-signed httpOnly cookie valid for 12 hours. Shows KPIs, breakdowns by service, destination and vehicle type, the quotes table and recent searches. `/api/admin/export?type=quotes|events` downloads CSV.
+- `/admin` and `/api/` are blocked in `robots.txt` and marked `noindex`.
 
-Only `findShipment()` changes; the UI and API contract stay the same.
+### 4.3b Feature flags
+
+`features` in `src/content/site.ts` turns Phase 2 parts on without new deploy work: `tools`, `polish`, `contactForm`, `emailNotifications`. Disabled pages return 404 and drop out of the nav and sitemap.
 
 ### 4.4 Internationalisation
 
@@ -106,7 +107,8 @@ Only `findShipment()` changes; the UI and API contract stay the same.
 
 - Inputs validated server-side with Zod; no raw HTML rendered from user input.
 - Security headers set in `next.config.ts` (`nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`).
-- No database or cookies in Phase 1. Form data goes to email only.
+- Phase 1 stores quote requests (contact details included) in Supabase in the EU region. Only the admin cookie is set; no tracking cookies.
+- The Supabase service role key and admin password live in Vercel env vars only.
 - Before launch: GDPR privacy policy text (placeholder at `/privacy`), consent line on forms, and rate limiting on `/api/*` (Vercel firewall or Upstash).
 
 ## 5. Environments and deployment

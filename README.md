@@ -1,19 +1,19 @@
 # MKY Global Forwarding website
 
-Redesign of [mkyglobalforwarding.com](https://mkyglobalforwarding.com) as a fast, bilingual-ready Next.js site with a quote request flow, shipment tracking and freight tools.
+Redesign of [mkyglobalforwarding.com](https://mkyglobalforwarding.com): vehicle shipping from European ports to the Middle East, with tracking by VIN, WhatsApp quote requests and a staff data view. Built in phases, see [`docs/PHASES.md`](docs/PHASES.md).
 
 | | |
 |---|---|
 | **Stack** | Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Zod |
 | **Hosting** | Vercel (recommended) or any Node 20+ host |
-| **Status** | Preview build. Items marked `TODO("...")` need content from MKY |
+| **Status** | Phase 1 preview. Items marked `TODO("...")` need content from MKY |
 | **Maintainer** | Ogu Emmanuel |
 
 ## Quick start
 
 ```bash
 npm install
-cp .env.example .env.local   # optional: add email settings
+cp .env.example .env.local   # set ADMIN_PASSWORD to open /admin
 npm run dev                  # http://localhost:3000
 ```
 
@@ -25,18 +25,22 @@ npm run start      # serve the production build
 npm run lint       # ESLint
 ```
 
-## What's in the site
+## What's in the site (Phase 1)
 
 | Route | Purpose |
 |---|---|
-| `/` | Homepage: hero with quick estimate and tracking bar, services, network map, tracking showcase, destinations, process, proof, CTA |
-| `/services`, `/services/[slug]` | Air, ocean, road and customs pages, generated from `src/content/site.ts` |
-| `/quote` | 4-step quote request (mode, route, cargo, contact) with live chargeable-weight estimate |
-| `/track` | Shipment tracking by reference, AWB, B/L or container number (demo data for now) |
-| `/tools` | Chargeable weight / CBM calculator, ISO 6346 container check, container guide, Incoterms explorer |
-| `/about`, `/contact`, `/privacy` | Company, contact form, privacy placeholder |
-| `/api/quote`, `/api/contact` | Validate submissions with Zod and email them to the team (Resend) |
-| `/api/track` | Tracking lookup. Swap the demo source for a real TMS or carrier API |
+| `/` | Homepage: hero, VIN tracking and quote bar, services, lanes map, process, CTA |
+| `/services`, `/services/[slug]` | Vehicle shipping, export documents (MRN, EUR.1, ACID), inland transport, container cargo |
+| `/quote` | 4-step quote request. Sent on WhatsApp (pre-filled message) or saved as a form |
+| `/track` | Track a vehicle by VIN / chassis number (demo data for now) |
+| `/admin` | Staff only: quote requests, tracking searches, KPIs, CSV export |
+| `/about`, `/contact`, `/privacy` | Company, WhatsApp / phone / email contact, privacy placeholder |
+| `/api/quote`, `/api/track` | Validate with Zod, save to the data store |
+| `/api/admin/*` | Login, logout, CSV export |
+
+Try tracking with the demo VINs `VF7DEMXXX00000001` or `WDBDEMXXX00000002`.
+
+Phase 2 features (email notifications, contact form, Polish, tools) are already in the code but switched off in `features` in `src/content/site.ts`.
 
 SEO is built in: per-page metadata, `sitemap.xml`, `robots.txt`, Open Graph image, and `LocalBusiness` JSON-LD.
 
@@ -61,7 +65,16 @@ UI strings for the header, footer and hero are in `src/i18n/dictionaries.ts` (En
 
 ## Environment variables
 
-See `.env.example`. None are required to run locally; without `RESEND_API_KEY`, form submissions are logged to the server console.
+See `.env.example`.
+
+| Variable | Needed for | Notes |
+|---|---|---|
+| `ADMIN_PASSWORD` | `/admin` | Without it the admin page is switched off |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Saving data in production | Server-only, never commit. Without them data goes to `.data/store.json` (local) |
+| `NEXT_PUBLIC_PREVIEW_BANNER` | Preview deploys | Shows the "preview" banner and blocks indexing |
+| `RESEND_API_KEY`, `QUOTE_INBOX`, `MAIL_FROM` | Phase 2 emails | Only used when `features.emailNotifications` is on |
+
+Database tables are in `supabase/schema.sql` (run once in the Supabase SQL editor).
 
 ## Branching
 
@@ -81,3 +94,6 @@ git push -u origin feature/real-team-photos
 - [`docs/AUDIT.md`](docs/AUDIT.md): audit of the current website
 - [`docs/PROPOSAL.md`](docs/PROPOSAL.md): redesign proposal, scope and roadmap
 - [`docs/TECHNICAL_SPEC.md`](docs/TECHNICAL_SPEC.md): architecture, integrations, deployment and handover
+- [`docs/03-user-journey-flows.md`](docs/03-user-journey-flows.md): customer, owner and staff flows
+- [`docs/04-ui-ux-brief.md`](docs/04-ui-ux-brief.md): design system and screens
+- [`docs/PHASES.md`](docs/PHASES.md): what is in each phase, and the changelog

@@ -50,7 +50,7 @@ export function TrackClient({ demoRefs }: { demoRefs: string[] }) {
         className="flex flex-col gap-3 rounded-2xl bg-white p-3 ring-1 ring-line sm:flex-row"
       >
         <label htmlFor="track-ref" className="sr-only">
-          Reference, AWB, B/L or container number
+          VIN / chassis number or MKY reference
         </label>
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
@@ -58,7 +58,7 @@ export function TrackClient({ demoRefs }: { demoRefs: string[] }) {
             id="track-ref"
             value={ref}
             onChange={(e) => setRef(e.target.value)}
-            placeholder="MKY reference, AWB, B/L or container number"
+            placeholder="VIN / chassis number, e.g. VF7DEMXXX00000001"
             className="h-12 w-full rounded-lg bg-transparent pl-10 pr-3 font-mono text-[15px] uppercase tracking-wide placeholder:normal-case placeholder:tracking-normal placeholder:text-ink-400 focus:outline-none"
             autoComplete="off"
           />
@@ -70,7 +70,7 @@ export function TrackClient({ demoRefs }: { demoRefs: string[] }) {
       </form>
 
       <p className="text-sm text-slate">
-        Demo references:{" "}
+        Demo VINs:{" "}
         {demoRefs.map((d, i) => (
           <span key={d}>
             {i > 0 && ", "}

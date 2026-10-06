@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageHero } from "@/components/PageHero";
+import { features } from "@/content/site";
 import { ChargeableWeightCalculator, ContainerChecker, ContainerGuide, IncotermsExplorer } from "@/components/tools/Tools";
 
 export const metadata: Metadata = {
@@ -9,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function ToolsPage() {
+  if (!features.tools) notFound();
   return (
     <>
       <PageHero

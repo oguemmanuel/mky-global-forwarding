@@ -1,12 +1,14 @@
 "use client";
 
 import clsx from "clsx";
-import { Plane, Ship, Truck } from "lucide-react";
+import { Ship, Truck } from "lucide-react";
 import type { Shipment } from "@/lib/tracking";
 import { formatContainer } from "@/lib/container";
+import { formatVin } from "@/lib/vin";
 import { StatusDot } from "@/components/ui";
 
-const ModeIcon = { air: Plane, sea: Ship, road: Truck } as const;
+const ModeIcon = { roro: Ship, container: Ship, road: Truck } as const;
+const modeName = { roro: "Ro-Ro", container: "Container", road: "Road" } as const;
 
 const dateFrom = (offset: number) => {
   const d = new Date();
@@ -53,12 +55,12 @@ export function ShipmentView({ shipment, variant = "full" }: { shipment: Shipmen
 
         <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-line ring-1 ring-line sm:grid-cols-3">
           <Meta k="ETA" v={`${dateFrom(shipment.etaOffset)} · ${shipment.etaOffset}d`} />
-          <Meta k="Equipment" v={shipment.equipment} />
-          {shipment.containerNo ? (
+          <Meta k="Vehicle" v={shipment.vehicle ? `${shipment.vehicle} · ${modeName[shipment.mode]}` : modeName[shipment.mode]} />
+          {shipment.vin ? (
+            <Meta k="VIN / chassis" v={formatVin(shipment.vin)} mono className="col-span-2 sm:col-span-1" />
+          ) : shipment.containerNo ? (
             <Meta k="Container (ISO 6346)" v={formatContainer(shipment.containerNo)} mono className="col-span-2 sm:col-span-1" />
-          ) : (
-            <Meta k="Mode" v={shipment.mode.toUpperCase()} mono className="col-span-2 sm:col-span-1" />
-          )}
+          ) : null}
         </dl>
       </div>
 

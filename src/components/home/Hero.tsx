@@ -51,33 +51,33 @@ export function Hero() {
             <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-ink-400">
               <span>MKY-DEMO-001</span>
               <span className="flex items-center gap-2 text-sky-400">
-                <StatusDot tone="sky" /> In transit
+                <StatusDot tone="sky" /> Sailing
               </span>
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
-                <div className="display-md text-3xl">KRK</div>
-                <div className="text-xs text-ink-400">Kraków</div>
+                <div className="display-md text-3xl">ANR</div>
+                <div className="text-xs text-ink-400">Antwerp</div>
               </div>
               <div className="text-right">
-                <div className="display-md text-3xl">TEM</div>
-                <div className="text-xs text-ink-400">Tema</div>
+                <div className="display-md text-3xl">ALY</div>
+                <div className="text-xs text-ink-400">Alexandria</div>
               </div>
             </div>
             <div className="relative mt-4 h-1 rounded-full bg-white/10">
-              <div className="absolute inset-y-0 left-0 w-[58%] rounded-full bg-gradient-to-r from-signal-500 to-signal-400" />
-              <div className="absolute top-1/2 left-[58%] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_12px_#df9b67]" />
+              <div className="absolute inset-y-0 left-0 w-[55%] rounded-full bg-gradient-to-r from-signal-500 to-signal-400" />
+              <div className="absolute top-1/2 left-[55%] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_12px_#df9b67]" />
             </div>
             <div className="mt-3 flex justify-between font-mono text-[11px] text-ink-400">
-              <span>40&apos; HC · Ocean</span>
-              <span>58% of route</span>
+              <span>VIN VF7…0001 · Ro-Ro</span>
+              <span>ACID · MRN · EUR.1 done</span>
             </div>
           </div>
           <div className="glass grid grid-cols-3 divide-x divide-white/10 rounded-2xl">
             {[
-              ["3", "Modes"],
+              ["VIN", "Tracking"],
+              ["MRN", "EUR.1 · ACID"],
               ["1", "Coordinator"],
-              ["Online", "Tracking"],
             ].map(([v, k]) => (
               <div key={k} className="px-4 py-4">
                 <div className="display-md num text-2xl">{v}</div>

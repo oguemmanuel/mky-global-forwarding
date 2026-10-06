@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { company, services } from "@/content/site";
+import { company, features, services } from "@/content/site";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { Fill, Logo } from "@/components/ui";
 
@@ -26,7 +26,7 @@ export function Footer() {
         </FooterCol>
         <FooterCol title={t.footer.company}>
           <li><Link href="/about" className="hover:text-white">{t.nav.about}</Link></li>
-          <li><Link href="/tools" className="hover:text-white">{t.nav.tools}</Link></li>
+          {features.tools && <li><Link href="/tools" className="hover:text-white">{t.nav.tools}</Link></li>}
           <li><Link href="/track" className="hover:text-white">{t.cta.track}</Link></li>
           <li><Link href="/quote" className="hover:text-white">{t.cta.quote}</Link></li>
           <li><Link href="/contact" className="hover:text-white">{t.nav.contact}</Link></li>

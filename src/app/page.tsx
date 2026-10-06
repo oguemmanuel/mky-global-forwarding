@@ -5,7 +5,7 @@ import { Hero } from "@/components/home/Hero";
 import { CoverageMap } from "@/components/home/CoverageMap";
 import { ShipmentView } from "@/components/shipment/ShipmentView";
 import { ButtonLink, Fill, StatusDot } from "@/components/ui";
-import { accreditations, lanes, processSteps, services, stats, testimonial } from "@/content/site";
+import { accreditations, destinationPorts, lanes, originPorts, portByCode, processSteps, services, stats, testimonial } from "@/content/site";
 import { media } from "@/content/media";
 import { findShipment } from "@/lib/tracking";
 
@@ -22,11 +22,10 @@ function Heading({ eyebrow, title, lead, light }: { eyebrow: string; title: Reac
   );
 }
 
-const modeLabel = { air: "Air", sea: "Ocean", road: "Road" } as const;
 
 export default async function HomePage() {
   const demo = await findShipment("MKY-DEMO-001");
-  const destinations = lanes.filter((l) => ["TEM", "DXB", "HAM", "SHA"].includes(l.code));
+  const laneCards = lanes.map((l) => ({ from: portByCode(l.from)!, to: portByCode(l.to)! }));
 
   return (
     <div className="bg-ink-950 text-white">
@@ -50,7 +49,7 @@ export default async function HomePage() {
       <section className="py-24 lg:py-32">
         <div className="container-x space-y-14">
           <div className="flex flex-wrap items-end justify-between gap-8">
-            <Heading eyebrow="Services" title={<>Every mode.<br />One team.</>} lead="Book a single leg or hand us the whole chain, from factory floor to final delivery." />
+            <Heading eyebrow="Services" title={<>Shipping, documents,<br />transport.</>} lead="Book the sailing, the paperwork or the trip to port, or hand us the whole job." />
             <ButtonLink href="/services" variant="ghost-dark">
               All services <ArrowRight className="h-4 w-4" />
             </ButtonLink>
@@ -84,14 +83,18 @@ export default async function HomePage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <Heading
               eyebrow="Network"
-              title={<>Kraków at the centre.<br />The world at the edges.</>}
-              lead="On the A4 corridor, within reach of the Baltic ports and Europe's main air hubs. Here are a few lanes we cover."
+              title={<>Europe&apos;s ports.<br />The Middle East&apos;s markets.</>}
+              lead="Run from our Kraków office, our vehicles sail from Antwerp, Alicante and Trieste to Alexandria, Shuwaikh and Latakia."
             />
             <div className="glass flex gap-6 rounded-2xl px-5 py-4">
-              {(["air", "sea", "road"] as const).map((m) => (
-                <div key={m}>
-                  <div className="display-md num text-2xl">{lanes.filter((l) => l.mode === m).length}</div>
-                  <div className="font-mono text-[10.5px] uppercase tracking-wider text-ink-400">{modeLabel[m]} lanes</div>
+              {[
+                [originPorts.length, "Ports of loading"],
+                [destinationPorts.length, "Destination ports"],
+                [lanes.length, "Active lanes"],
+              ].map(([n, k]) => (
+                <div key={k}>
+                  <div className="display-md num text-2xl">{n}</div>
+                  <div className="font-mono text-[10.5px] uppercase tracking-wider text-ink-400">{k}</div>
                 </div>
               ))}
             </div>
@@ -106,15 +109,15 @@ export default async function HomePage() {
           <div className="space-y-10">
             <Heading
               eyebrow="Visibility"
-              title={<>See it move.<br />Every milestone.</>}
-              lead="Every shipment gets a reference you can track online, with each step logged as it happens. No chasing emails."
+              title={<>Track it by VIN.<br />Every milestone.</>}
+              lead="Enter the vehicle's VIN or chassis number and see where it is: documents, loading, sailing and release. No chasing on WhatsApp."
             />
             <ul className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
               {[
-                { Icon: Gauge, t: "Priced in minutes", d: "Chargeable weight and equipment worked out before you ask." },
-                { Icon: MapPinned, t: "Live milestones", d: "Booking, departure, transhipment, arrival, delivery." },
+                { Icon: Gauge, t: "Quote in one message", d: "Vehicle, route and documents sent in one go, by form or WhatsApp." },
+                { Icon: MapPinned, t: "Status by VIN", d: "Booked, documents, loaded, sailing, released." },
                 { Icon: UserRound, t: "One coordinator", d: "A named person owns your shipment end to end." },
-                { Icon: FileCheck2, t: "Documents checked", d: "Paperwork reviewed before cargo moves." },
+                { Icon: FileCheck2, t: "Documents done", d: "MRN, EUR.1 and ACID / CargoX before loading." },
               ].map(({ Icon, t, d }) => (
                 <li key={t} className="space-y-2 border-t border-white/10 pt-4">
                   <Icon className="h-5 w-5 text-sky-400" />
@@ -137,18 +140,18 @@ export default async function HomePage() {
       {/* Destinations */}
       <section className="border-t border-white/10 py-24 lg:py-32">
         <div className="container-x space-y-12">
-          <Heading eyebrow="Destinations" title="Where our clients ship" lead="Example lanes from Kraków. Ask about any route that isn't listed." />
+          <Heading eyebrow="Lanes" title="Where our vehicles sail" lead="Current lanes. Ask about any route that isn't listed." />
           <div className="grid gap-px overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10 sm:grid-cols-2 lg:grid-cols-4">
-            {destinations.map((d) => (
-              <Link key={d.code} href={`/quote?mode=${d.mode}&to=${encodeURIComponent(d.city)}`} className="group bg-ink-950 p-6 transition hover:bg-ink-900">
+            {laneCards.map(({ from, to }) => (
+              <Link key={`${from.code}-${to.code}`} href={`/quote?mode=vehicle&from=${encodeURIComponent(`${from.city}, ${from.country}`)}&to=${encodeURIComponent(`${to.city}, ${to.country}`)}`} className="group bg-ink-950 p-6 transition hover:bg-ink-900">
                 <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-ink-400">
-                  <span>KRK → {d.code}</span>
-                  <span className="flex items-center gap-2"><StatusDot tone="sky" /> {modeLabel[d.mode]}</span>
+                  <span>{from.code} → {to.code}</span>
+                  <span className="flex items-center gap-2"><StatusDot tone="sky" /> Ro-Ro</span>
                 </div>
-                <div className="display mt-10 text-6xl text-white/90 transition group-hover:text-signal-400">{d.code}</div>
+                <div className="display mt-10 text-6xl text-white/90 transition group-hover:text-signal-400">{to.code}</div>
                 <div className="mt-2 flex items-center justify-between text-ink-300">
-                  <span>{d.city}</span>
-                  <span className="text-sm text-signal-400 opacity-0 transition group-hover:opacity-100">Get rate →</span>
+                  <span>{from.city} → {to.city}, {to.country}</span>
+                  <span className="text-sm text-signal-400 opacity-0 transition group-hover:opacity-100">Quote →</span>
                 </div>
               </Link>
             ))}
@@ -159,7 +162,7 @@ export default async function HomePage() {
       {/* Process */}
       <section className="bg-paper py-24 text-ink-900 lg:py-32">
         <div className="container-x space-y-14">
-          <Heading light eyebrow="How it works" title="Quote to delivery in four steps" />
+          <Heading light eyebrow="How it works" title="Quote to release in four steps" />
           <ol className="grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((s, i) => (
               <li key={s.title} className="bg-white p-7">
@@ -201,10 +204,10 @@ export default async function HomePage() {
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-950/40" />
         <div className="container-x flex flex-wrap items-end justify-between gap-10 py-24 lg:py-32">
           <h2 className="display max-w-3xl text-5xl sm:text-6xl lg:text-7xl">
-            Got cargo<br />to move<span className="text-signal-400">?</span>
+            Got vehicles<br />to ship<span className="text-signal-400">?</span>
           </h2>
           <div className="space-y-5">
-            <p className="max-w-sm text-lg text-ink-300">Send the details. A coordinator replies with a price and transit options.</p>
+            <p className="max-w-sm text-lg text-ink-300">Send the vehicle details. A coordinator replies with the price and next sailing.</p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href="/quote" size="lg">
                 Request a quote <ArrowRight className="h-4 w-4" />

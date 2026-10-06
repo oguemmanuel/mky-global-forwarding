@@ -1,53 +1,62 @@
 import { NextResponse } from "next/server";
 import { fieldErrors, quoteSchema } from "@/lib/schemas";
 import { makeReference, notifyTeam } from "@/lib/notify";
-import { chargeable } from "@/lib/freight";
+import { saveQuote } from "@/lib/store";
+import { quoteMessage } from "@/lib/quoteMessage";
+import { features } from "@/content/site";
 
 export async function POST(request: Request) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ ok: false, errors: { form: "Invalid request" } }, { status: 400 });
-  }
-
+  const body = await request.json().catch(() => null);
   const parsed = quoteSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ ok: false, errors: fieldErrors(parsed.error) }, { status: 422 });
   }
   const q = parsed.data;
 
-  // Honeypot filled: pretend success, do nothing
+  // Honeypot filled: pretend success, store nothing
   if (q.website) return NextResponse.json({ ok: true, reference: makeReference("MKY-Q") });
 
   const reference = makeReference("MKY-Q");
-  const hasDims = q.lengthCm && q.widthCm && q.heightCm;
-  const calc = hasDims
-    ? chargeable([{ length: q.lengthCm!, width: q.widthCm!, height: q.heightCm!, quantity: q.pieces, weight: q.weightKg / q.pieces }], q.mode)
-    : null;
+  const isVehicle = q.mode === "vehicle" || q.mode === "road" || q.mode === "documents";
 
-  await notifyTeam(`New quote request ${reference}: ${q.mode.toUpperCase()} ${q.origin} → ${q.destination}`, {
-    Reference: reference,
-    Mode: q.mode,
-    Route: `${q.origin} → ${q.destination}`,
-    "Service level": q.serviceLevel,
-    Incoterm: q.incoterm || "Not sure",
-    "Customs needed": q.customs,
-    "Ready date": q.readyDate,
-    Goods: q.goods,
-    "HS code": q.hsCode,
-    Equipment: q.equipment,
-    Pieces: q.pieces,
-    "Total weight (kg)": q.weightKg,
-    "Dims per piece (cm)": hasDims ? `${q.lengthCm} × ${q.widthCm} × ${q.heightCm}` : undefined,
-    "Est. chargeable (kg)": calc ? Math.round(calc.chargeableKg) : undefined,
-    "Dangerous goods": q.dangerous ? "YES" : "No",
-    Name: q.name,
-    Company: q.company,
-    Email: q.email,
-    Phone: q.phone,
-    Notes: q.notes,
-  });
+  try {
+    await saveQuote({
+      created_at: new Date().toISOString(),
+      reference,
+      channel: q.channel,
+      status: "new",
+      mode: q.mode,
+      origin: q.origin,
+      destination: q.destination,
+      ready_date: q.readyDate || null,
+      collection: q.collection === "yes",
+      documents: q.documents,
+      incoterm: q.incoterm || null,
+      vehicle_type: isVehicle ? q.vehicleType ?? null : null,
+      vehicle_count: isVehicle ? q.vehicleCount ?? null : null,
+      make_model: isVehicle ? q.makeModel || null : null,
+      vins: isVehicle ? q.vins || null : null,
+      running: q.mode === "vehicle" || q.mode === "road" ? q.running === "yes" : null,
+      goods: q.mode === "cargo" ? q.goods || null : null,
+      pieces: q.mode === "cargo" ? q.pieces ?? null : null,
+      weight_kg: q.mode === "cargo" ? q.weightKg ?? null : null,
+      dims_cm: q.mode === "cargo" && q.lengthCm && q.widthCm && q.heightCm ? `${q.lengthCm}x${q.widthCm}x${q.heightCm}` : null,
+      dangerous: q.mode === "cargo" ? q.dangerous : false,
+      name: q.name,
+      company: q.company || null,
+      email: q.email,
+      phone: q.phone || null,
+      notes: q.notes || null,
+    });
+  } catch (err) {
+    console.error("[quote] save failed", err);
+    return NextResponse.json({ ok: false, errors: { form: "We couldn't save your request. Please try again or message us on WhatsApp." } }, { status: 500 });
+  }
+
+  // Phase 2: email notification (switch on in content/site.ts and set RESEND_API_KEY)
+  if (features.emailNotifications) {
+    await notifyTeam(`New quote request ${reference}`, { Request: quoteMessage(q, reference).replace(/\*/g, "") });
+  }
 
   return NextResponse.json({ ok: true, reference });
 }

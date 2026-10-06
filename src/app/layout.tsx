@@ -12,11 +12,11 @@ import { PreviewBanner, WhatsAppButton } from "@/components/layout/Extras";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? company.url),
   title: {
-    default: "MKY Global Forwarding | Freight forwarding from Kraków",
+    default: "MKY Global Forwarding | Vehicle shipping from Europe to the Middle East",
     template: "%s | MKY Global Forwarding",
   },
   description:
-    "Air, ocean and road freight with in-house customs clearance. Request a quote in minutes and track every shipment online. Based in Kraków, Poland.",
+    "Vehicle shipping from European ports to Egypt, Kuwait and the Middle East, with export documents (MRN, EUR.1, ACID / CargoX) handled. Track every vehicle by VIN. Based in Kraków, Poland.",
   applicationName: company.name,
   openGraph: {
     type: "website",
@@ -48,7 +48,7 @@ const jsonLd = {
     addressCountry: company.address.countryCode,
   },
   geo: { "@type": "GeoCoordinates", latitude: company.geo.lat, longitude: company.geo.lng },
-  areaServed: "Worldwide",
+  areaServed: ["Europe", "Middle East", "North Africa"],
   makesOffer: services.map((s) => ({
     "@type": "Offer",
     itemOffered: { "@type": "Service", name: s.name, description: s.short },
